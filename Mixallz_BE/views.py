@@ -26,16 +26,16 @@ def login(req):
     try:
         user = Users.objects.get(username=req.data['username'])
     except ObjectDoesNotExist:
-        return Response({'error': 'Username not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'ไม่มีชื่อผู้ใช้นี้ในระบบหรือชื่อผู้ใช้ผิดพลาด'}, status=status.HTTP_404_NOT_FOUND)
     
     if not user.check_password(req.data['password']):
-        return Response({'error': 'Wrong password'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'รหัสผ่านผิดพลาด'}, status=status.HTTP_400_BAD_REQUEST)
     
     if not user.is_activated:
-        return Response({'error': 'User account is not activate'}, status=status.HTTP_403_FORBIDDEN)
+        return Response({'error': 'บัญชีผู้ใช้นี้ถูกปิดการใช้งาน'}, status=status.HTTP_403_FORBIDDEN)
 
     if user.is_logged_in:
-        return Response({'error': 'User is already logged in'}, status=status.HTTP_409_CONFLICT)
+        return Response({'error': 'มีผู้ใช้กำลังใช้งานบัญชีนี้อยู่'}, status=status.HTTP_409_CONFLICT)
 
     # Fetch current time from World Time API
     world_time_response = requests.get('https://worldtimeapi.org/api/ip')
@@ -57,11 +57,11 @@ def login(req):
 def register(req):
      # Check if username already exists
     if Users.objects.filter(username=req.data['username']).exists():
-        return Response({'error': 'Username already exists'}, status=status.HTTP_409_CONFLICT)
+        return Response({'error': 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว'}, status=status.HTTP_409_CONFLICT)
     
     # Check if email already exists
     if Users.objects.filter(email=req.data['email']).exists():
-        return Response({'error': 'Email already exists'}, status=status.HTTP_409_CONFLICT)
+        return Response({'error': 'อีเมลนี้ถูกใช้งานแล้ว'}, status=status.HTTP_409_CONFLICT)
     
     serializer = UserSerializer(data=req.data)
     if serializer.is_valid():
