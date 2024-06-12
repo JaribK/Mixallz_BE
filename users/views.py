@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view
 from .models import Users
 from .serializers import UserSerializer
 from django.utils import timezone
+from rest_framework.permissions import IsAuthenticated
+from users.models import Users
 
 class UsersList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
