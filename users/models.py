@@ -8,6 +8,7 @@ from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail, EmailMessage
 import requests
+from django.core.validators import MinValueValidator
 
 class Users(AbstractBaseUser, PermissionsMixin):
 
@@ -16,7 +17,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     username = models.CharField(max_length=150, blank=True , unique=True)
     email = models.EmailField(_('email address'), unique=True)
-    points = models.IntegerField(default=0)
+    points = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     last_login = models.DateTimeField(_('last login'), blank=True, null=True)
     date_joined = models.DateTimeField(_('date joined'), default=current_time)
     is_superuser = models.BooleanField(_('staff'), default=False)
